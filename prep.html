@@ -627,10 +627,15 @@ a.o-card:hover{filter:brightness(.98)}
    so it can be installed as its own app on Android. On first open it asks the old address
    for what it had saved in this browser (access key, settings, offline data) and copies it
    across, without overwriting anything already here. The old address answers only this
-   exact address. Added by publish-apps.py; not in the source page. */
+   exact address. Added by publish-apps.py; not in the source page.
+   After the first run it runs again whenever the Open Brain access key is missing here
+   (a first run that found nothing, or a key cleared later), so the app never stays locked
+   while the catalog has the key. 'ob.keyStop' (set by the app's Lock button) stops that. */
 (function () {
-  var FLAG = 'ob.handover.v1', FROM = 'https://openbrain.thewishingstream.com';
-  try { if (localStorage.getItem(FLAG)) return; } catch (e) { return; }
+  var FLAG = 'ob.handover.v1', FROM = 'https://openbrain.thewishingstream.com', KEY = "";
+  try {
+    if (localStorage.getItem(FLAG) && !(KEY && !localStorage.getItem(KEY) && !localStorage.getItem('ob.keyStop'))) return;
+  } catch (e) { return; }
   function start() {
     var f = document.createElement('iframe'), done = false;
     f.hidden = true; f.tabIndex = -1; f.setAttribute('aria-hidden', 'true'); f.title = 'Handover';
